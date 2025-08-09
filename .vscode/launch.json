@@ -6,6 +6,34 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"name": "PowerShell Test LocalizationParser",
+			"type": "PowerShell",
+			"request": "launch",
+			"script": "${workspaceFolder}/src/LocalizationParser.ps1",
+			"args": [
+				"${workspaceFolder}/tests/fixtures/Example/Example.psm1",
+				"-Verbose",
+				"-Debug"
+			],
+			"cwd": "${cwd}",
+			"createTemporaryIntegratedConsole": true
+		},
+		{
+			"name": "PowerShell Test LocalizationParser (fr-FR)",
+			"type": "PowerShell",
+			"request": "launch",
+			"script": "${workspaceFolder}/src/LocalizationParser.ps1",
+			"args": [
+				"${workspaceFolder}/tests/fixtures/Example/Example.psm1",
+				"-UICulture",
+				"fr-FR",
+				"-Verbose",
+				"-Debug"
+			],
+			"cwd": "${cwd}",
+			"createTemporaryIntegratedConsole": true
+		},
+		{
 			"name": "Run Extension",
 			"type": "extensionHost",
 			"request": "launch",
