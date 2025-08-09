@@ -1,6 +1,7 @@
 # Extension Packaging and Installation
 
-This document explains how to package and install the PowerShell Localization extension for development and testing purposes.
+This document explains how to package and install the PowerShell Localization
+extension for development and testing purposes.
 
 ## Quick Start
 

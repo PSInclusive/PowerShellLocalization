@@ -4,12 +4,19 @@
 // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 {
 	"version": "0.2.0",
+	"inputs": [
+		{
+			"id": "modulePath",
+			"type": "promptString",
+			"description": "Enter the path to the module (e.g., Example.psm1)"
+		}
+	],
 	"configurations": [
 		{
 			"name": "PowerShell Test LocalizationParser",
 			"type": "PowerShell",
 			"request": "launch",
-			"script": "${workspaceFolder}/src/LocalizationParser.ps1",
+			"script": "${workspaceFolder}/resources/LocalizationParser.ps1",
 			"args": [
 				"${workspaceFolder}/tests/fixtures/Example/Example.psm1",
 				"-Verbose",
@@ -19,14 +26,12 @@
 			"createTemporaryIntegratedConsole": true
 		},
 		{
-			"name": "PowerShell Test LocalizationParser (fr-FR)",
+			"name": "PowerShell Test LocalizationParser (Prompt)",
 			"type": "PowerShell",
 			"request": "launch",
-			"script": "${workspaceFolder}/src/LocalizationParser.ps1",
+			"script": "${workspaceFolder}/resources/LocalizationParser.ps1",
 			"args": [
-				"${workspaceFolder}/tests/fixtures/Example/Example.psm1",
-				"-UICulture",
-				"fr-FR",
+				"${input:modulePath}",
 				"-Verbose",
 				"-Debug"
 			],

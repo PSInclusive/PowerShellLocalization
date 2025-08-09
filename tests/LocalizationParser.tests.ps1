@@ -9,7 +9,7 @@ Describe 'LocalizationParser' {
         [string]$ModuleFile,
         [string]$UICulture
       )
-      & "$PSScriptRoot\..\src\LocalizationParser.ps1" -ModuleFile $ModuleFile -UICulture $UICulture
+      & "$PSScriptRoot\..\resources\LocalizationParser.ps1" -ModuleFile $ModuleFile -UICulture $UICulture
     }
 
     # Act

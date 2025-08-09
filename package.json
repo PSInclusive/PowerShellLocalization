@@ -1,12 +1,14 @@
 {
   "name": "powershelllocalization",
   "displayName": "PowerShell Localization",
-  "description": "View PowerShell localization variables inline. NEW: Inline values for localization variables in PowerShell files are now shown directly in the editor for faster development and easier debugging.",
+  "description": "View PowerShell localization variables inline.",
   "version": "0.1.0",
   "license": "MIT",
   "author": {
-    "name": "PowerShellLocalization Contributors"
+    "name": "Gilbert Sanchez"
   },
+  "icon": "static/logo.png",
+  "publisher": "PSInclusive",
   "repository": {
     "type": "git",
     "url": "https://github.com/PSInclusive/PowerShellLocalization"
@@ -21,6 +23,9 @@
   "activationEvents": [
     "onLanguage:powershell"
   ],
+  "bugs": {
+    "url": "https://github.com/PSInclusive/PowerShellLocalization/issues"
+  },
   "main": "./out/extension.js",
   "contributes": {
     "languages": [
@@ -40,10 +45,28 @@
     "configuration": {
       "title": "PowerShell Localization",
       "properties": {
-        "powershelllocalization.enableInlineValues": {
+        "powershellLocalization.enableInlineValues": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable inline display of localization variable values in PowerShell files during debugging."
+        },
+        "powershellLocalization.enableDecorations": {
           "type": "boolean",
           "default": true,
-          "description": "Enable inline display of localization variable values in PowerShell files."
+          "description": "Enable decoration display of localization variable values in PowerShell files during code writing (Error Lens style)."
+        },
+        "powershellLocalization.searchExclude": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "**/node_modules/**",
+            "**/out/**",
+            "**/dist/**",
+            "**/.git/**"
+          ],
+          "description": "Configure glob patterns for excluding directories and files from PowerShell module scanning."
         }
       }
     }
@@ -56,8 +79,8 @@
     "lint": "eslint src",
     "test": "vscode-test",
     "package": "vsce package",
-    "package-install": "pwsh -ExecutionPolicy Bypass -File ./package-and-install.ps1",
-    "package-only": "pwsh -ExecutionPolicy Bypass -File ./package-and-install.ps1 -SkipInstall"
+    "package-install": "pwsh -NoLogo -NoProfile -ExecutionPolicy Bypass -File ./package-and-install.ps1",
+    "package-only": "pwsh -NoLogo -NoProfile -ExecutionPolicy Bypass -File ./package-and-install.ps1 -SkipInstall"
   },
   "devDependencies": {
     "@types/vscode": "^1.102.0",
@@ -70,5 +93,11 @@
     "@vscode/test-cli": "^0.0.11",
     "@vscode/test-electron": "^2.5.2"
   },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
+  "keywords": [
+    "powershell",
+    "localization",
+    "inline",
+    "decorations"
+  ]
 }

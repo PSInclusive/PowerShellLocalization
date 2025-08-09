@@ -38,7 +38,7 @@ if (Test-Path $file) {
   )
   if ($importLocalizedDataCalls.Count -eq 0) {
     Write-Warning "No Import-LocalizedData calls found in $file"
-    continue
+    return @{}
   }
 
   try {
@@ -46,8 +46,44 @@ if (Test-Path $file) {
     Push-Location $parentDirectory
     foreach ($call in $importLocalizedDataCalls) {
       # Here you can add logic to extract and process the localization data
-      $splat = @{
-        BaseDirectory = $parentDirectory
+      $splat = @{}
+
+      function Get-VariableFromScriptBlock {
+        [CmdletBinding()]
+        [OutputType([hashtable])]
+        param(
+          [System.Management.Automation.Language.ScriptBlockAst]
+          $ScriptBlock,
+          [PSObject]
+          $Element
+        )
+        $lastAssignment = $ScriptBlock.FindAll(
+          {
+            param($Ast)
+            $Ast -is [System.Management.Automation.Language.AssignmentStatementAst] -and
+            $Ast.Left -is [System.Management.Automation.Language.VariableExpressionAst] -and
+            $Ast.Left.VariablePath.UserPath -eq $Element.VariablePath.UserPath -and
+            $Ast.Extent.StartLineNumber -le $Element.Extent.StartLineNumber
+          },
+          $true
+        ) | Select-Object -Last 1
+        if ($lastAssignment) {
+          if ($Element.Splatted) {
+            $return = @{}
+            # Append all the items of the lastAssignment to the current splat
+            foreach ($kv in $lastAssignment.Right.Expression.KeyValuePairs) {
+              # If the value is a variable, recurse
+              if ($kv.Item2.PipelineElements.Expression -is [System.Management.Automation.Language.VariableExpressionAst]) {
+                $return[$kv.Item1.Extent.Text] = Get-VariableFromScriptBlock -ScriptBlock $ScriptBlock -Element $kv.Item2.PipelineElements.Expression
+              } else {
+                $return[$kv.Item1.Extent.Text] = $kv.Item2.Extent.Text.Trim('"').Trim("'")
+              }
+            }
+            return $return
+          } else {
+            return $Element.Extent.Text.Trim('"').Trim("'")
+          }
+        }
       }
 
       # We go over each command element and extract the value
@@ -77,28 +113,12 @@ if (Test-Path $file) {
           }
           { $_ -is [System.Management.Automation.Language.VariableExpressionAst] } {
             # Handle variables
-            # Look through script block for the last assignment that happens before this point
-            $lastAssignment = $scriptBlock.FindAll(
-              {
-                param($Ast)
-                $Ast -is [System.Management.Automation.Language.AssignmentStatementAst] -and
-                $Ast.Left -is [System.Management.Automation.Language.VariableExpressionAst] -and
-                $Ast.Left.VariablePath.UserPath -eq $element.VariablePath.UserPath -and
-                $Ast.Extent.StartLineNumber -le $element.Extent.StartLineNumber
-              },
-              $true
-            ) | Select-Object -Last 1
-            if ($lastAssignment) {
-              if ($element.Splatted) {
-                # Append all the items of the lastAssignment to the current splat
-                foreach ($kv in $lastAssignment.Right.Expression.KeyValuePairs) {
-                  $splat[$kv.Item1.Extent.Text] = $kv.Item2.Extent.Text.Trim('"').Trim("'")
-                }
-              } else {
-                $splat[$parameterName] = $lastAssignment.Right.Extent.Text.Trim('"').Trim("'")
-              }
+            $variableValue = Get-VariableFromScriptBlock -ScriptBlock $scriptBlock -Element $element
+            if ($variableValue -is [hashtable]) {
+              # If the variable is a hashtable, merge it into splat
+              $splat += $variableValue
             } else {
-              $splat[$parameterName] = $element.Extent.Text
+              $splat[$parameterName] = $variableValue
             }
             continue
           }
@@ -117,6 +137,10 @@ if (Test-Path $file) {
       if ($null -ne $UICulture -and -not [String]::IsNullOrEmpty($UICulture.Name)) {
         $splat['UICulture'] = $UICulture.Name
       }
+      # Override the base directory if its set
+      $splat['BaseDirectory'] = $parentDirectory
+      # Override error action
+      $splat['ErrorAction'] = 'Continue'
       Write-Verbose "Running command with splat: $($splat | ConvertTo-Json)"
       $data = Import-LocalizedData @splat
       $result[$bindingVariable] = $data

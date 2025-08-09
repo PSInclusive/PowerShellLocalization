@@ -2,6 +2,7 @@ import * as assert from 'assert';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
+import { Utils } from '../utils';
 // import * as myExtension from '../../extension';
 
 suite('PowerShell Localization Extension Test Suite', () => {
@@ -206,15 +207,32 @@ Write-Host $LocalizedData.Key2
 
 	suite('Configuration Settings', () => {
 		test('Should have inline values configuration', () => {
-			const config = vscode.workspace.getConfiguration('powershelllocalization');
+			const config = vscode.workspace.getConfiguration('powershellLocalization');
 
 			// Test that the configuration exists (default value should be accessible)
 			const enableInlineValues = config.get('enableInlineValues');
 			assert.strictEqual(typeof enableInlineValues, 'boolean', 'enableInlineValues should be a boolean');
 		});
 
+		test('Should have search exclude configuration', () => {
+			const config = vscode.workspace.getConfiguration('powershellLocalization');
+
+			// Test that the search exclude configuration exists
+			const searchExclude = config.get('searchExclude');
+			assert.ok(Array.isArray(searchExclude), 'searchExclude should be an array');
+
+			// Check default values
+			const defaultExcludes = ['**/node_modules/**', '**/out/**', '**/dist/**', '**/.git/**'];
+			const actualExcludes = searchExclude as string[];
+
+			// Should have at least the default excludes
+			defaultExcludes.forEach(pattern => {
+				assert.ok(actualExcludes.includes(pattern), `Should include default exclude pattern: ${pattern}`);
+			});
+		});
+
 		test('Should respect configuration changes', async () => {
-			const config = vscode.workspace.getConfiguration('powershelllocalization');
+			const config = vscode.workspace.getConfiguration('powershellLocalization');
 			const originalValue = config.get('enableInlineValues');
 
 			// Configuration update might not work in test environment, so just test that we can read it
@@ -225,19 +243,19 @@ Write-Host $LocalizedData.Key2
 	suite('Localization Parser Integration', () => {
 		test('Should find LocalizationParser.ps1 script', () => {
 			// Test that the PowerShell script exists in the expected location
-			const scriptPath = path.join(__dirname, '..', 'LocalizationParser.ps1');
+			const scriptPath = path.join(__dirname, '..', '..', 'resources', 'LocalizationParser.ps1');
 			const absolutePath = path.resolve(scriptPath);
 			console.log(`Looking for script at: ${absolutePath}`);
 
 			// Check if file exists
 			const exists = fs.existsSync(absolutePath);
 			if (!exists) {
-				// Try alternative path
-				const altPath = path.join(__dirname, '..', '..', 'src', 'LocalizationParser.ps1');
+				// Try alternative path for development
+				const altPath = path.join(__dirname, '..', '..', 'resources', 'LocalizationParser.ps1');
 				const altExists = fs.existsSync(altPath);
 				assert.ok(altExists, `LocalizationParser.ps1 should exist at ${altPath}`);
 			} else {
-				assert.ok(exists, 'LocalizationParser.ps1 should exist in src directory');
+				assert.ok(exists, 'LocalizationParser.ps1 should exist in resources directory');
 			}
 		});
 
@@ -370,6 +388,46 @@ function Test-Function {
 
 			assert.strictEqual(doc.languageId, 'powershell');
 			assert.ok(!doc.getText().includes('Import-LocalizedData'), 'Should not contain Import-LocalizedData');
+		});
+	});
+
+	suite('Utility Functions', () => {
+		test('Should correctly identify excluded paths', () => {
+			const excludePatterns = ['**/node_modules/**', '**/out/**', '**/.git/**'];
+
+			// Test cases that should be excluded
+			const excludedPaths = [
+				'C:/project/node_modules/package/file.psm1',
+				'/home/user/project/out/compiled.psm1',
+				'D:\\workspace\\.git\\hooks\\file.psm1',
+				'project/node_modules/nested/deep/file.psm1'
+			];
+
+			excludedPaths.forEach(path => {
+				assert.ok(Utils.isPathExcluded(path, excludePatterns),
+					`Path should be excluded: ${path}`);
+			});
+
+			// Test cases that should NOT be excluded
+			const includedPaths = [
+				'C:/project/src/module.psm1',
+				'/home/user/project/scripts/test.psm1',
+				'D:\\workspace\\modules\\example.psm1',
+				'project/lib/utils.psm1'
+			];
+
+			includedPaths.forEach(path => {
+				assert.ok(!Utils.isPathExcluded(path, excludePatterns),
+					`Path should NOT be excluded: ${path}`);
+			});
+		});
+
+		test('Should handle empty exclude patterns', () => {
+			const path = 'C:/project/node_modules/package/file.psm1';
+			const emptyPatterns: string[] = [];
+
+			assert.ok(!Utils.isPathExcluded(path, emptyPatterns),
+				'No paths should be excluded when patterns array is empty');
 		});
 	});
 });

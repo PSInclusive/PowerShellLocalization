@@ -6,3 +6,5 @@ $withSplat = @{
   BindingVariable = 'AsSplat'
 }
 Import-LocalizedData @withSplat
+
+Write-Host $AsSplat.Key3
