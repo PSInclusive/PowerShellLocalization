@@ -1,23 +1,52 @@
 {
   "name": "powershelllocalization",
-  "displayName": "PowerShellLocalization",
-  "description": "View your PowerShell localization text inline.",
-  "version": "0.0.1",
+  "displayName": "PowerShell Localization",
+  "description": "View PowerShell localization variables inline. NEW: Inline values for localization variables in PowerShell files are now shown directly in the editor for faster development and easier debugging.",
+  "version": "0.1.0",
+  "license": "MIT",
+  "author": {
+    "name": "PowerShellLocalization Contributors"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PSInclusive/PowerShellLocalization"
+  },
   "engines": {
-    "vscode": "^1.103.0"
+    "vscode": "^1.102.0"
   },
   "categories": [
+    "Programming Languages",
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onLanguage:powershell"
+  ],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [
+    "languages": [
       {
-        "command": "powershelllocalization.helloWorld",
-        "title": "Hello World"
+        "id": "powershell",
+        "aliases": [
+          "PowerShell",
+          "ps1"
+        ],
+        "extensions": [
+          ".ps1",
+          ".psd1",
+          ".psm1"
+        ]
       }
-    ]
+    ],
+    "configuration": {
+      "title": "PowerShell Localization",
+      "properties": {
+        "powershelllocalization.enableInlineValues": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable inline display of localization variable values in PowerShell files."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "yarn run compile",
@@ -25,10 +54,13 @@
     "watch": "tsc -watch -p ./",
     "pretest": "yarn run compile && yarn run lint",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "package": "vsce package",
+    "package-install": "pwsh -ExecutionPolicy Bypass -File ./package-and-install.ps1",
+    "package-only": "pwsh -ExecutionPolicy Bypass -File ./package-and-install.ps1 -SkipInstall"
   },
   "devDependencies": {
-    "@types/vscode": "^1.103.0",
+    "@types/vscode": "^1.102.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
     "@typescript-eslint/eslint-plugin": "^8.39.0",

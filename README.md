@@ -1,71 +1,63 @@
-# powershelllocalization README
+# PowerShell Localization
 
-This is the README for your extension "powershelllocalization". After writing up a brief description, we recommend including the following sections.
+A Visual Studio Code extension that displays PowerShell localization variable values inline in your editor, making it easier to develop and debug internationalized PowerShell modules.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- **Inline Value Display**: View localization variable values directly in your PowerShell files
+- **Real-time Updates**: Values update automatically when localization files change  
+- **Multi-language Support**: Works with all localization files (en-US, fr-FR, etc.)
+- **PowerShell Integration**: Seamlessly integrates with PowerShell module development workflow
 
-For example if there is an image subfolder under your extension project workspace:
+## How It Works
 
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+The extension automatically scans for PowerShell modules (`.psm1` files) and their associated localization data files (`.psd1` files in language-specific folders like `en-US/`, `fr-FR/`, etc.). When you reference localization variables in your PowerShell code using `$LocalizedData.VariableName`, the extension will display the actual localized value inline.
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+- Visual Studio Code 1.102.0 or higher
+- PowerShell modules with localization data files
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
 This extension contributes the following settings:
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+- `powershelllocalization.enableInlineValues`: Enable/disable inline display of localization variable values
 
-## Known Issues
+## Installation
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+1. Package the extension using the provided scripts
+2. Install the `.vsix` file in VS Code
+3. Reload VS Code to activate the extension
 
-## Release Notes
+## Development
 
-Users appreciate release notes as you update your extension.
+To build and install this extension:
 
-### 1.0.0
+```bash
+# Using PowerShell script
+.\package-and-install.ps1
 
-Initial release of ...
+# Using npm scripts  
+yarn package-install
 
-### 1.0.1
+# Package only
+yarn package-only
+```
 
-Fixed issue #.
+## Usage
 
-### 1.1.0
+1. Open a PowerShell module (`.psm1` file) that uses localization
+2. Ensure you have localization data files in language folders (e.g., `en-US/ModuleName.psd1`)
+3. Reference localization variables in your code: `$LocalizedData.MessageText`
+4. The extension will display the actual localized values inline
 
-Added features X, Y, and Z.
+## Contributing
 
----
+Contributions are welcome! Please feel free to submit issues and pull requests.
 
-## Following extension guidelines
+## License
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+MIT
 
 **Enjoy!**
