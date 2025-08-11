@@ -2,7 +2,7 @@
   "name": "powershelllocalization",
   "displayName": "PowerShell Localization",
   "description": "View PowerShell localization variables inline.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "author": {
     "name": "Gilbert Sanchez"
@@ -72,15 +72,15 @@
     }
   },
   "scripts": {
+    "bootstrap": "pwsh -NoLogo -NoProfile -ExecutionPolicy Bypass -File ./build.ps1 -Bootstrap",
     "vscode:prepublish": "yarn run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "yarn run compile && yarn run lint",
     "lint": "eslint src",
-    "test": "vscode-test",
-    "package": "vsce package",
-    "package-install": "pwsh -NoLogo -NoProfile -ExecutionPolicy Bypass -File ./package-and-install.ps1",
-    "package-only": "pwsh -NoLogo -NoProfile -ExecutionPolicy Bypass -File ./package-and-install.ps1 -SkipInstall"
+    "test": "pwsh -NoLogo -NoProfile -ExecutionPolicy Bypass -File ./build.ps1 -Task Test",
+    "vscode:test": "vscode-test",
+    "package": "pwsh -NoLogo -NoProfile -ExecutionPolicy Bypass -File ./build.ps1 -Task Package"
   },
   "devDependencies": {
     "@types/vscode": "^1.102.0",

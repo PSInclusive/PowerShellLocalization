@@ -4,7 +4,8 @@ A Visual Studio Code extension that displays PowerShell localization variable
 values as decorations in your editor, making it easier to develop and debug
 internationalized PowerShell modules.
 
-![Example showing the inline decorator](static/image.png)
+<!-- Full image URL with https required for vscode -->
+![Example showing the inline decorator](https://github.com/PSInclusive/PowerShellLocalization/raw/main/static/image.png)
 
 ## Features
 
@@ -53,15 +54,15 @@ This extension contributes the following settings:
 
 To build and install this extension:
 
-```bash
-# Using PowerShell script
-.\package-and-install.ps1
-
-# Using npm scripts
-yarn package-install
-
-# Package only
-yarn package-only
+```pwsh
+# Using pwsh (all OS's)
+./build.ps1 -Task Test
+# Use the -Bootstrap flag to install all the dependancies.
+./build.ps1 -Task Test -Bootstrap
+# You can also list all the available tasks with -Help
+./build.ps1 -Help
+# To install a local build
+./build.ps1 -Task Install
 ```
 
 ## Usage

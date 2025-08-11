@@ -3,36 +3,51 @@
 This document explains how to package and install the PowerShell Localization
 extension for development and testing purposes.
 
+> [!NOTE]
+> Tasks are split between psake and yarn. This is due to the fact that
+> psake can setup more robust dependencies. Several tasks can only be called via
+> Node so those calls stay in the package.json
+
 ## Quick Start
 
-### Option 1: PowerShell Script (Recommended)
+### Bootstrap
+
+To install all the necessary dependencies ensure that you bootstrap your
+environment.
 
 ```powershell
-.\package-and-install.ps1
+.\build.ps1 -Bootstrap
 ```
 
-### Option 2: Batch File (Windows)
+### Option 1: PowerShell Build Script (Recommended)
 
-```cmd
-package-and-install.bat
+```powershell
+# To run through the compile, lint, and test
+.\build.ps1 -Task Test
+# To run all the tests + Install
+.\build.ps1 -Task Install
+# To see all the possible tasks
+.\build.ps1 -Help
 ```
 
-### Option 3: NPM Scripts
+This will configure the environment and perform a clean build, compile, lint,
+package, and install the extension.
+
+#### To install
+
+### Option 2: NPM Scripts
 
 ```bash
-# Package and install
-yarn package-install
-
-# Package only (skip installation)
-yarn package-only
-
-# Package using vsce directly
+# Package (calls psake)
 yarn package
+
+# Get a list of packages
+yarn run
 ```
 
 ## Script Features
 
-The `package-and-install.ps1` script provides the following functionality:
+The `build.ps1` script provides the following functionality (via `psake.ps1`):
 
 - ✅ **Dependency Check**: Automatically installs `vsce` if not present
 - 🧹 **Clean Build**: Removes previous builds and packages
@@ -43,18 +58,23 @@ The `package-and-install.ps1` script provides the following functionality:
 
 ## Script Parameters
 
-```powershell
-# Package and install (default)
-.\package-and-install.ps1
+See
+[Parameters & Properties](https://psake.dev/docs/tutorial-basics/parameters-properties)
+for a more detailed explanation. It is highly unlikely you'll need to modify any
+of the properties.
 
-# Package only, skip installation
-.\package-and-install.ps1 -SkipInstall
+```powershell
+# Test (default)
+.\build.ps1
+
+# Package only to a different output directory
+.\build.ps1 -Task Package -Parameters @{ OutDir = '/path/to/dir' }
 
 # Force installation even if already installed
-.\package-and-install.ps1 -Force
+.\build.ps1 -Parameters @{ Force = $true }
 
 # Combine parameters
-.\package-and-install.ps1 -SkipInstall -Force
+.\build.ps1 -Parameters @{ SkipInstall = $true; Force = $true }
 ```
 
 ## Manual Steps
@@ -82,12 +102,12 @@ If you prefer to run the steps manually:
 4. **Package extension**:
 
    ```bash
-   vsce package
+   vsce package --allow-missing-repository --out $script:outDir
    ```
 
 5. **Install extension**:
 
-   ```bash
+   ```shell
    code --install-extension powershelllocalization-*.vsix
    ```
 
@@ -116,21 +136,18 @@ After installation:
 1. Reload VS Code (`Ctrl+Shift+P` → "Developer: Reload Window")
 2. Open a PowerShell file (`.ps1`, `.psm1`, or `.psd1`)
 3. Check that the extension is active in the Extensions panel
+4. You should see logs in the Output panel.
 
-### Clean Installation
+### Continuous Integration
 
-To completely clean and reinstall:
+For GitHub Actions or other CI systems, use the `CI` task to output build/package information:
 
 ```powershell
-# Remove old packages
-Remove-Item *.vsix -Force
-
-# Clean compiled output
-Remove-Item -Recurse out -Force
-
-# Run full package and install
-.\package-and-install.ps1 -Force
+.\build.ps1 -Task CI
 ```
+
+This will output the VSIX path, name, and Changelog information to
+`$env:GITHUB_OUTPUT` for use in workflows.
 
 ## Development Workflow
 
