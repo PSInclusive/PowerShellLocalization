@@ -1,0 +1,43 @@
+name: CI
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  checks: write
+  pull-requests: write
+jobs:
+  lint:
+    name: Run Linters
+    runs-on: [ubuntu-latest]
+    steps:
+    - uses: actions/checkout@v4
+    - uses: streetsidesoftware/cspell-action@v6
+      with:
+        strict: false
+        suggestions: true
+        incremental_files_only: true
+    - uses: reviewdog/action-alex@v1.16.0
+      with:
+        github_token: ${{ secrets.github_token }}
+        # Change reviewdog reporter if you need [github-pr-check,github-check,github-pr-review].
+        reporter: github-pr-review
+        level: warning
+    - shell: pwsh
+      name: Apply PSScriptAnalyzer Fixes
+      run: Invoke-ScriptAnalyzer . -Fix
+    - name: PSScriptAnalyzer Fixes
+      uses: reviewdog/action-suggester@v1.21.0
+      with:
+        tool_name: 'PSScriptAnalyzer'
+  test:
+    name: Run Tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Test
+      shell: pwsh
+      run: ./build.ps1 -Task Test
