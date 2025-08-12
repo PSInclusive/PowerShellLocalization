@@ -6,7 +6,7 @@ in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how
 to structure this file.
 
-## [0.2.0]
+## [Unreleased]
 
 ### Added
 - Windows PowerShell fallback support for better compatibility
@@ -27,6 +27,14 @@ to structure this file.
     - `debug` - All messages including debug output
   - Smart log filtering that respects the configured log level
   - Debug messages are now filtered out by default, providing cleaner output
+
+### Fixed
+- LocalizationParser.ps1 now defaults to en-US culture when UICulture parameter is not provided
+  - Fixes Import-LocalizedData failures in environments with invariant culture
+  - Ensures localization files can be found in culture-specific subdirectories
+- Updated Pester configuration syntax in psake.ps1 for compatibility with Pester 5.x
+  - Replaced deprecated [PesterConfiguration]@{} with New-PesterConfiguration
+  - Fixed PassThru parameter usage for modern Pester API
 
 ## [0.1.0] Initial Release
 
