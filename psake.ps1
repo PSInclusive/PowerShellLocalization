@@ -49,7 +49,7 @@ Task Compile -Depends InstallDependencies -Description "Compile TypeScript files
   Write-Host '✅ TypeScript compiled successfully'
 }
 
-Task Lint -Description "Lint the source code" {
+Task Lint -Depends InstallDependencies -Description "Lint the source code" {
   Write-Host '🔍 Running linter...'
   try {
     yarn run lint
