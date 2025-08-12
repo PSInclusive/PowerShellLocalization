@@ -1,6 +1,7 @@
 # psake build script for PowerShellLocalization
 # See https://psake.dev/ for syntax and usage
 #requires -Version 7
+# spell-checker:ignore Markdig
 Properties {
   $script:extensionName = 'PowerShellLocalization'
   $script:vsixPattern = '*.vsix'
@@ -9,14 +10,21 @@ Properties {
 
   $script:PesterConfiguration = New-PesterConfiguration
   $script:PesterConfiguration.Output.CIFormat = 'Auto'
+  $script:PesterConfiguration.Output.Verbosity = 'Detailed'
   $script:PesterConfiguration.Run.Path = ".\tests\"
   $script:PesterConfiguration.Run.PassThru = $true
+}
+
+FormatTaskName {
+  param($taskName)
+  Write-Host 'Task: ' -ForegroundColor Cyan -NoNewline
+  Write-Host $taskName.ToUpper() -ForegroundColor Blue
 }
 
 Task Default -Depends Test
 Task Test -Depends Lint, VscodeTest, Pester
 
-Task Clean {
+Task Clean -Description "Clean the output directory" {
   Write-Host '🧹 Cleaning previous builds...'
   if (Test-Path $script:outDir) {
     Remove-Item -Recurse -Force $script:outDir
@@ -29,32 +37,19 @@ Task Clean {
   }
 }
 
-
-Task InstallVsce {
-  Write-Host '🔍 Checking for vsce (Visual Studio Code Extension manager)...'
-  try {
-    $null = vsce --version 2>$null
-    Write-Host '✅ vsce is already installed'
-  } catch {
-    Write-Host '⚠️  vsce not found. Installing vsce globally...'
-    npm install -g @vscode/vsce
-    Write-Host '✅ vsce installed successfully'
-  }
-}
-
-Task InstallDependencies -Depends InstallVsce {
+Task InstallDependencies -Description "Install project dependencies" {
   Write-Host '📥 Installing dependencies...'
   yarn install
   Write-Host '✅ Dependencies installed successfully'
 }
 
-Task Compile -Depends InstallDependencies {
+Task Compile -Depends InstallDependencies -Description "Compile TypeScript files" {
   Write-Host '🔨 Compiling TypeScript...'
   yarn run compile
   Write-Host '✅ TypeScript compiled successfully'
 }
 
-Task Lint {
+Task Lint -Description "Lint the source code" {
   Write-Host '🔍 Running linter...'
   try {
     yarn run lint
@@ -64,7 +59,7 @@ Task Lint {
   }
 }
 
-Task VscodeTest -Depends InstallDependencies {
+Task VscodeTest -Depends InstallDependencies -Description "Run VS Code tests" {
   Write-Host '🔍 Running VS Code tests...'
   try {
     yarn run vscode:test
@@ -75,10 +70,9 @@ Task VscodeTest -Depends InstallDependencies {
   }
 }
 
-Task Pester {
+Task Pester -Description "Run Pester tests" {
   Write-Host '🧪 Running Pester tests...'
   try {
-    Import-Module Pester
     $results = Invoke-Pester -Configuration $script:PesterConfiguration
     if ($results.FailedCount -gt 0) {
       Write-Error '❌ Pester tests failed. Please fix the issues before packaging.'
@@ -87,13 +81,14 @@ Task Pester {
     Write-Host '✅ Pester tests passed'
   } catch {
     Write-Error '❌ Pester tests failed. Please fix the issues before packaging.'
+    $PSCmdlet.ThrowTerminatingError($_)
     exit 1
   }
 }
 
-Task Package -Depends Clean, Compile, Test {
+Task Package -Depends Clean, Compile, Test -Description "Package the extension" {
   Write-Host '📦 Packaging extension...'
-  $packageResult = Write-Output 'y' | vsce package --allow-missing-repository --out $script:outDir
+  Write-Output 'y' | vsce package --allow-missing-repository --out $script:outDir
   $vsixFiles = Get-ChildItem -Path $script:outDir -Filter $script:vsixPattern | Sort-Object LastWriteTime -Descending
   if (-not $vsixFiles) {
     throw '❌ No .vsix file was generated'
@@ -102,7 +97,7 @@ Task Package -Depends Clean, Compile, Test {
   Write-Host "✅ Extension packaged successfully: $($vsixFiles[0].Name)"
 }
 
-Task Install -Depends Package {
+Task Install -Depends Package -Description "Install the extension in VS Code" {
   Write-Host '🚀 Installing extension in VS Code...'
   $command = @('code', '--install-extension', $script:vsixFile, '--force')
   & $command
@@ -110,8 +105,7 @@ Task Install -Depends Package {
   Write-Host '🔄 Please reload VS Code to activate the extension.'
 }
 
-# CI task for GitHub Actions
-Task CI -Depends Package {
+Task CI -Depends Package -Description "Run CI task for GitHub Actions" {
   Write-Host '🏗️ Running CI task for GitHub Actions...'
   if ($env:GITHUB_OUTPUT) {
     Write-Host 'GITHUB_OUTPUT environment variable is set. Writing output...'
