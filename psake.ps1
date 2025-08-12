@@ -127,7 +127,10 @@ Task CI -Depends Package {
   Add-Content -Path $outputFile -Value "vsix_name=$($vsixFiles[0].Name)"
   Write-Host "::notice::VSIX path: $vsixFile"
   Write-Host "::notice::VSIX name: $($vsixFiles[0].Name)"
-  # TODO: Output the version
+  # Output the version
+  $version = (Get-Content -Path "$PSScriptRoot/package.json" | ConvertFrom-Json).version
+  Write-Host "::notice::VSIX version: $version"
+  Add-Content -Path $outputFile -Value "vsix_version=$version"
   $ChangeLogPath = Join-Path -Path "$PSScriptRoot" -Child 'CHANGELOG.md'
   $md = ConvertFrom-Markdown $ChangeLogPath
   $content = Get-Content $ChangeLogPath

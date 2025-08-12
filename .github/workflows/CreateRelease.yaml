@@ -1,0 +1,32 @@
+name: Create Release
+on:
+  workflow_dispatch:
+jobs:
+  package:
+    
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: yarn package
+      - name: Get Release Details
+        id: release_details
+        shell: pwsh
+        run: |
+          # TODO: Get latest release number
+          .\build.ps1 -Task CI
+          # Outputs:
+          #  vsix_path
+          #  vsix_name
+          #  changelog_title
+          #  changelog_body
+      - name: Create a Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ steps.release_details.outputs.vsix_name }}
+          body: ${{ steps.release_details.outputs.changelog_body }}
+          files: ${{ steps.release_details.outputs.vsix_path }}
+          make_latest: true
+          tag_name: ${{ steps.release_details.outputs.vsix_version }}
