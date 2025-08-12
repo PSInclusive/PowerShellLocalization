@@ -6,7 +6,7 @@ in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how
 to structure this file.
 
-## [Unreleased]
+## [0.2.0]
 
 ### Added
 - Windows PowerShell fallback support for better compatibility

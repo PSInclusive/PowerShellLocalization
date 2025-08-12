@@ -136,6 +136,9 @@ if (Test-Path $file) {
       }
       if ($null -ne $UICulture -and -not [String]::IsNullOrEmpty($UICulture.Name)) {
         $splat['UICulture'] = $UICulture.Name
+      } else {
+        # Default to en-US when no UICulture is specified
+        $splat['UICulture'] = 'en-US'
       }
       # Override the base directory if its set
       $splat['BaseDirectory'] = $parentDirectory
