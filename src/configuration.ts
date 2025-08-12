@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { ExtensionConfig } from './types';
+import { ExtensionConfig, LogLevel } from './types';
 import { CONFIGURATION_BASENAME } from './utils';
 
 /**
@@ -20,7 +20,8 @@ export class ConfigurationManager {
         '**/out/**',
         '**/dist/**',
         '**/.git/**'
-      ])
+      ]),
+      logLevel: config.get<LogLevel>('logLevel', 'info')
     };
   }
 
@@ -43,6 +44,13 @@ export class ConfigurationManager {
    */
   public static getSearchExcludePatterns(): string[] {
     return this.getConfiguration().searchExclude;
+  }
+
+  /**
+   * Gets the current log level
+   */
+  public static getLogLevel(): LogLevel {
+    return this.getConfiguration().logLevel;
   }
 
   /**

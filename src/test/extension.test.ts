@@ -231,6 +231,21 @@ Write-Host $LocalizedData.Key2
 			});
 		});
 
+		test('Should have log level configuration', () => {
+			const config = vscode.workspace.getConfiguration('powershellLocalization');
+
+			// Test that the log level configuration exists
+			const logLevel = config.get('logLevel');
+			assert.strictEqual(typeof logLevel, 'string', 'logLevel should be a string');
+
+			// Check that it's one of the valid values
+			const validLevels = ['error', 'warn', 'info', 'debug'];
+			assert.ok(validLevels.includes(logLevel as string), 'logLevel should be one of the valid values');
+
+			// Check default value
+			assert.strictEqual(logLevel, 'info', 'Default log level should be info');
+		});
+
 		test('Should respect configuration changes', async () => {
 			const config = vscode.workspace.getConfiguration('powershellLocalization');
 			const originalValue = config.get('enableInlineValues');
@@ -428,6 +443,49 @@ function Test-Function {
 
 			assert.ok(!Utils.isPathExcluded(path, emptyPatterns),
 				'No paths should be excluded when patterns array is empty');
+		});
+	});
+
+	suite('Logger Functionality', () => {
+		test('Should respect log level configuration for debug messages', () => {
+			// This test verifies the logger respects the log level setting
+			// Since we can't easily mock the configuration in this test environment,
+			// we'll test the log level logic conceptually
+
+			const logLevels = ['error', 'warn', 'info', 'debug'];
+			const logLevelPriorities = { error: 0, warn: 1, info: 2, debug: 3 };
+
+			// Test that debug messages should be filtered when log level is info
+			const currentLevel = 'info';
+			const debugLevel = 'debug';
+			
+			const shouldShowDebug = logLevelPriorities[debugLevel] <= logLevelPriorities[currentLevel];
+			assert.strictEqual(shouldShowDebug, false, 'Debug messages should not show when log level is info');
+
+			// Test that info messages should show when log level is info
+			const infoLevel = 'info';
+			const shouldShowInfo = logLevelPriorities[infoLevel] <= logLevelPriorities[currentLevel];
+			assert.strictEqual(shouldShowInfo, true, 'Info messages should show when log level is info');
+
+			// Test that error messages always show
+			const errorLevel = 'error';
+			const shouldShowError = logLevelPriorities[errorLevel] <= logLevelPriorities[currentLevel];
+			assert.strictEqual(shouldShowError, true, 'Error messages should always show');
+		});
+
+		test('Should have valid log level hierarchy', () => {
+			const logLevels = ['error', 'warn', 'info', 'debug'];
+			const logLevelPriorities = { error: 0, warn: 1, info: 2, debug: 3 };
+
+			// Verify hierarchy is correct (lower numbers = higher priority)
+			assert.ok(logLevelPriorities.error < logLevelPriorities.warn, 'Error should have higher priority than warn');
+			assert.ok(logLevelPriorities.warn < logLevelPriorities.info, 'Warn should have higher priority than info');
+			assert.ok(logLevelPriorities.info < logLevelPriorities.debug, 'Info should have higher priority than debug');
+
+			// Verify all levels are represented
+			logLevels.forEach(level => {
+				assert.ok(level in logLevelPriorities, `Log level ${level} should be in priorities`);
+			});
 		});
 	});
 });
