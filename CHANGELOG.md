@@ -6,6 +6,18 @@ in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how
 to structure this file.
 
+## [Unreleased]
+
+### Added
+- Configurable logging levels to control debug message visibility
+  - New `powershellLocalization.logLevel` setting with four hierarchical levels:
+    - `error` - Only error messages
+    - `warn` - Error and warning messages
+    - `info` - Error, warning, and info messages (default)
+    - `debug` - All messages including debug output
+  - Smart log filtering that respects the configured log level
+  - Debug messages are now filtered out by default, providing cleaner output
+
 ## [0.1.0] Initial Release
 
 - Foundational script `LocalizationParser` looks for `psm1` that container
