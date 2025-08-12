@@ -7,9 +7,10 @@ Properties {
   $script:outDir = 'out'
   $script:scriptDir = $PSScriptRoot
 
-  $script:PesterConfiguration = [PesterConfiguration]@{}
+  $script:PesterConfiguration = New-PesterConfiguration
   $script:PesterConfiguration.Output.CIFormat = 'Auto'
   $script:PesterConfiguration.Run.Path = ".\tests\"
+  $script:PesterConfiguration.Run.PassThru = $true
 }
 
 Task Default -Depends Test
@@ -77,7 +78,8 @@ Task VscodeTest -Depends InstallDependencies {
 Task Pester {
   Write-Host '🧪 Running Pester tests...'
   try {
-    $results = Invoke-Pester -Configuration $script:PesterConfiguration -PassThru
+    Import-Module Pester
+    $results = Invoke-Pester -Configuration $script:PesterConfiguration
     if ($results.FailedCount -gt 0) {
       Write-Error '❌ Pester tests failed. Please fix the issues before packaging.'
       exit 1
