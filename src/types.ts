@@ -17,4 +17,7 @@ export interface ExtensionConfig {
   enableInlineValues: boolean;
   enableDecorations: boolean;
   searchExclude: string[];
+  logLevel: LogLevel;
 }
+
+export type LogLevel = 'error' | 'warn' | 'info' | 'debug';

@@ -67,6 +67,17 @@
             "**/.git/**"
           ],
           "description": "Configure glob patterns for excluding directories and files from PowerShell module scanning."
+        },
+        "powershellLocalization.logLevel": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warn", 
+            "info",
+            "debug"
+          ],
+          "default": "info",
+          "description": "Set the logging level for the PowerShell Localization extension. Debug logs are only shown when set to 'debug'."
         }
       }
     }
