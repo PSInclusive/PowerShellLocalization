@@ -8,7 +8,7 @@ import { Logger } from './logger';
  */
 export class PowerShellExecutor {
   private logger: Logger;
-  private static readonly POWERSHELL_EXECUTABLE = 'pwsh';
+  private powershellExecutable: string | null = null;
 
   constructor() {
     this.logger = Logger.getInstance();
@@ -44,12 +44,70 @@ export class PowerShellExecutor {
   }
 
   /**
+   * Detects which PowerShell executable is available on the system
+   * Checks for pwsh first (PowerShell 7+), then falls back to powershell (Windows PowerShell 5.1)
+   */
+  private async detectPowerShellExecutable(): Promise<string> {
+    if (this.powershellExecutable) {
+      return this.powershellExecutable;
+    }
+
+    const executablesToTry = ['pwsh', 'powershell'];
+    
+    for (const executable of executablesToTry) {
+      try {
+        await this.testExecutable(executable);
+        this.powershellExecutable = executable;
+        this.logger.info(`Using PowerShell executable: ${executable}`);
+        return executable;
+      } catch (error) {
+        this.logger.debug(`${executable} not available: ${error}`);
+      }
+    }
+
+    throw new Error('No PowerShell executable found. Please install PowerShell 7+ (pwsh) or ensure Windows PowerShell (powershell) is available.');
+  }
+
+  /**
+   * Tests if a PowerShell executable is available and working
+   */
+  private testExecutable(executable: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      const ps = childProcess.spawn(
+        executable,
+        ['-NoLogo', '-NoProfile', '-NonInteractive', '-Command', 'Write-Host "OK"'],
+        { shell: true }
+      );
+
+      let hasOutput = false;
+
+      ps.stdout.on('data', () => {
+        hasOutput = true;
+      });
+
+      ps.on('close', (code: number) => {
+        if (code === 0 && hasOutput) {
+          resolve();
+        } else {
+          reject(new Error(`Executable ${executable} exited with code ${code} or produced no output`));
+        }
+      });
+
+      ps.on('error', (error: Error) => {
+        // This typically happens when the executable is not found
+        reject(new Error(`Executable ${executable} not found or failed to start: ${error.message}`));
+      });
+    });
+  }
+
+  /**
    * Checks if PowerShell is available on the system
    */
   public async isPowerShellAvailable(): Promise<boolean> {
     try {
+      const executable = await this.detectPowerShellExecutable();
       const output = await this.executeScript('', ['-Command', 'Write-Host "$($PSVersionTable.PSVersion)"']);
-      this.logger.info(`Detected PowerShell version: ${output.trim()}`);
+      this.logger.info(`Detected PowerShell version using ${executable}: ${output.trim()}`);
       return true;
     } catch (error) {
       this.logger.warn(`PowerShell not available or failed to execute: ${error}`);
@@ -69,8 +127,10 @@ export class PowerShellExecutor {
   * - Supports both script file execution and direct command execution
   * - Filters out potentially dangerous arguments for security
   */
-  public executeScript(scriptPath: string, args: string[] = []): Promise<string> {
+  public async executeScript(scriptPath: string, args: string[] = []): Promise<string> {
     this.logger.debug(`Executing PowerShell script: ${scriptPath} with args: ${args.join(' ')}`);
+
+    const executable = await this.detectPowerShellExecutable();
 
     // Filter arguments to prevent potentially dangerous operations
     // Allow only safe PowerShell parameters and user arguments
@@ -120,7 +180,7 @@ export class PowerShellExecutor {
       }
 
       const ps = childProcess.spawn(
-        PowerShellExecutor.POWERSHELL_EXECUTABLE,
+        executable,
         pwshArguments,
         { shell: true }
       );
