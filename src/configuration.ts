@@ -21,7 +21,8 @@ export class ConfigurationManager {
         '**/dist/**',
         '**/.git/**'
       ]),
-      logLevel: config.get<LogLevel>('logLevel', 'info')
+      logLevel: config.get<LogLevel>('logLevel', 'info'),
+      uiCulture: config.get<string>('uiCulture', 'en-US')
     };
   }
 
@@ -51,6 +52,21 @@ export class ConfigurationManager {
    */
   public static getLogLevel(): LogLevel {
     return this.getConfiguration().logLevel;
+  }
+
+  /**
+   * Gets the current UI culture
+   */
+  public static getUICulture(): string {
+    return this.getConfiguration().uiCulture;
+  }
+
+  /**
+   * Sets the UI culture
+   */
+  public static async setUICulture(culture: string): Promise<void> {
+    const config = vscode.workspace.getConfiguration(CONFIGURATION_BASENAME);
+    await config.update('uiCulture', culture, vscode.ConfigurationTarget.Global);
   }
 
   /**

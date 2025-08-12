@@ -17,14 +17,18 @@ export class PowerShellExecutor {
   /**
    * Executes the LocalizationParser.ps1 script for a given module
    */
-  public async parseLocalizationData(modulePath: string): Promise<LocalizationData> {
-    this.logger.debug(`Parsing localization data for module: ${modulePath}`);
+  public async parseLocalizationData(modulePath: string, uiCulture?: string): Promise<LocalizationData> {
+    this.logger.debug(`Parsing localization data for module: ${modulePath} with culture: ${uiCulture || 'default'}`);
 
     try {
       const scriptPath = path.join(__dirname, '..', 'resources', 'LocalizationParser.ps1');
 
-      // TODO: Add support for loading a specific UICulture
       const args = ['-ModuleFile', modulePath];
+      
+      // Add UICulture parameter if provided
+      if (uiCulture) {
+        args.push('-UICulture', uiCulture);
+      }
 
       const output = await this.executeScript(scriptPath, args);
 
@@ -138,6 +142,7 @@ export class PowerShellExecutor {
       '-Command',
       '-File',
       '-ModuleFile',
+      '-UICulture',
       '-Path',
       '-Name',
       '-Filter',

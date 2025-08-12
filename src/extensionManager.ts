@@ -57,6 +57,9 @@ export class ExtensionManager {
       // Set up file system watchers
       this.setupFileSystemWatchers();
 
+      // Register command palette commands
+      this.registerCommands();
+
       this.logger.info('PowerShell Localization extension activated successfully');
 
     } catch (error) {
@@ -131,6 +134,40 @@ export class ExtensionManager {
   }
 
   /**
+   * Registers command palette commands
+   */
+  private registerCommands(): void {
+    // Register switch UI culture command
+    const switchCommand = vscode.commands.registerCommand(
+      'powershellLocalization.switchUICulture',
+      async () => {
+        await this.handleSwitchUICulture();
+      }
+    );
+
+    // Register set to en-US command
+    const setEnUsCommand = vscode.commands.registerCommand(
+      'powershellLocalization.setUICultureToEnUs',
+      async () => {
+        await this.handleSetUICulture('en-US');
+      }
+    );
+
+    // Register set to fr-FR command
+    const setFrFrCommand = vscode.commands.registerCommand(
+      'powershellLocalization.setUICultureToFrFr',
+      async () => {
+        await this.handleSetUICulture('fr-FR');
+      }
+    );
+
+    this.disposables.push(switchCommand, setEnUsCommand, setFrFrCommand);
+    this.context.subscriptions.push(switchCommand, setEnUsCommand, setFrFrCommand);
+
+    this.logger.info('Command palette commands registered');
+  }
+
+  /**
    * Handles configuration changes
    */
   private async handleConfigurationChange(): Promise<void> {
@@ -160,6 +197,57 @@ export class ExtensionManager {
       }
     } catch (error) {
       this.logger.error('Failed to handle module file change', error as Error);
+    }
+  }
+
+  /**
+   * Handles switching UI culture via input box
+   */
+  private async handleSwitchUICulture(): Promise<void> {
+    try {
+      const currentCulture = ConfigurationManager.getUICulture();
+      const inputCulture = await vscode.window.showInputBox({
+        prompt: 'Enter UI Culture (e.g., en-US, fr-FR, de-DE)',
+        value: currentCulture,
+        validateInput: (value) => {
+          const culturePattern = /^[a-z]{2}(-[A-Z]{2})?$/;
+          if (!culturePattern.test(value)) {
+            return 'Invalid culture format. Use format like "en-US", "fr-FR", "de-DE"';
+          }
+          return null;
+        }
+      });
+
+      if (inputCulture && inputCulture !== currentCulture) {
+        await this.handleSetUICulture(inputCulture);
+      }
+    } catch (error) {
+      this.logger.error('Failed to switch UI culture', error as Error);
+      vscode.window.showErrorMessage(`Failed to switch UI culture: ${(error as Error).message}`);
+    }
+  }
+
+  /**
+   * Handles setting UI culture to a specific value
+   */
+  private async handleSetUICulture(culture: string): Promise<void> {
+    try {
+      const currentCulture = ConfigurationManager.getUICulture();
+      if (culture === currentCulture) {
+        vscode.window.showInformationMessage(`UI Culture is already set to ${culture}`);
+        return;
+      }
+
+      await ConfigurationManager.setUICulture(culture);
+      
+      // Clear the cache since culture has changed
+      this.decorationProvider.clearCache();
+      
+      vscode.window.showInformationMessage(`UI Culture changed to ${culture}`);
+      this.logger.info(`UI Culture changed from ${currentCulture} to ${culture}`);
+    } catch (error) {
+      this.logger.error(`Failed to set UI culture to ${culture}`, error as Error);
+      vscode.window.showErrorMessage(`Failed to set UI culture: ${(error as Error).message}`);
     }
   }
 

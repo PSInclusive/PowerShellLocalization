@@ -205,7 +205,7 @@ export class LocalizationDecorationProvider {
         return null;
       }
 
-      const localizationData = await this.powershellExecutor.parseLocalizationData(modulePath);
+      const localizationData = await this.powershellExecutor.parseLocalizationData(modulePath, ConfigurationManager.getUICulture());
 
       // Cache the result
       this.localizationCache.set(cacheKey, localizationData);

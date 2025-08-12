@@ -9,6 +9,16 @@ to structure this file.
 ## [Unreleased]
 
 ### Added
+- UICulture configuration support for PowerShell localization
+  - New `powershellLocalization.uiCulture` setting to specify default UI culture (e.g., 'en-US', 'fr-FR')
+  - Setting validates culture format using pattern `^[a-z]{2}(-[A-Z]{2})?$`
+- Command palette commands for UICulture switching
+  - `PowerShell Localization: Switch UI Culture` - Interactive input box for custom culture
+  - `PowerShell Localization: Set UI Culture to English (en-US)` - Quick switch to English
+  - `PowerShell Localization: Set UI Culture to French (fr-FR)` - Quick switch to French
+- Automatic cache clearing when UICulture changes
+  - Decorations refresh automatically when culture is changed via settings or commands
+  - Ensures localization values are immediately updated to reflect new culture
 - Windows PowerShell fallback support for better compatibility
   - Extension now automatically detects and uses available PowerShell executable
   - Tries PowerShell 7+ (`pwsh`) first, then falls back to Windows PowerShell 5.1 (`powershell`)
