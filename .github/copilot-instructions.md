@@ -119,6 +119,36 @@ The repository includes PowerShell-based build scripts, but they require PowerSh
 4. **Run linting** to catch issues early: `yarn run lint`
 5. **Test the PowerShell parser** if you modify localization logic
 6. **Package the extension** to ensure no packaging issues: `vsce package --allow-missing-repository`
+7. **Update the changelog** for every PR (see Changelog Updates section below)
+
+### Changelog Updates
+
+**REQUIRED FOR EVERY PR**: Update the CHANGELOG.md file following the [Keep a Changelog](http://keepachangelog.com/) format.
+
+**Process:**
+1. **Add your changes** to the "Unreleased" section at the top of `CHANGELOG.md`
+2. **Use appropriate categories** for your changes:
+   - **Added** - for new features
+   - **Changed** - for changes in existing functionality
+   - **Deprecated** - for soon-to-be removed features
+   - **Removed** - for now removed features
+   - **Fixed** - for any bug fixes
+   - **Security** - in case of vulnerabilities
+3. **Write clear descriptions** that help users understand the impact of changes
+4. **Keep entries concise** but descriptive enough for users to understand what changed
+
+**Example changelog entry:**
+```markdown
+## [Unreleased]
+
+### Added
+- New PowerShell localization parsing feature for multi-language support
+
+### Fixed
+- Resolved issue with decoration provider not updating on file changes
+```
+
+**Note**: The "Unreleased" section will be converted to a version number during releases. Your job is only to add entries to the "Unreleased" section.
 
 ### Key Commands for Development
 
@@ -133,6 +163,11 @@ Before completing any change, always run:
 ```bash
 yarn run lint && yarn run compile && vsce package --allow-missing-repository
 ```
+
+**Also verify:**
+- [ ] CHANGELOG.md has been updated with your changes in the "Unreleased" section
+- [ ] Changelog entries follow Keep a Changelog format with appropriate categories
+- [ ] Changelog descriptions are clear and user-focused
 
 ## Architecture Overview
 

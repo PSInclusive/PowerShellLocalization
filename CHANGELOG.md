@@ -9,6 +9,10 @@ to structure this file.
 ## [Unreleased]
 
 ### Added
+- Changelog update instructions to Copilot instructions
+  - Clear process for updating CHANGELOG.md for every PR
+  - Guidelines for using Keep a Changelog format categories
+  - Examples and validation checklist for changelog entries
 - Configurable logging levels to control debug message visibility
   - New `powershellLocalization.logLevel` setting with four hierarchical levels:
     - `error` - Only error messages
