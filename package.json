@@ -78,9 +78,32 @@
           ],
           "default": "info",
           "description": "Set the logging level for the PowerShell Localization extension. Debug logs are only shown when set to 'debug'."
+        },
+        "powershellLocalization.uiCulture": {
+          "type": "string",
+          "default": "en-US",
+          "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
+          "description": "Specify the UI culture for PowerShell localization data. Use format like 'en-US', 'fr-FR', 'de-DE', etc."
         }
       }
-    }
+    },
+    "commands": [
+      {
+        "command": "powershellLocalization.switchUICulture",
+        "title": "Switch UI Culture",
+        "category": "PowerShell Localization"
+      },
+      {
+        "command": "powershellLocalization.setUICultureToEnUs",
+        "title": "Set UI Culture to English (en-US)",
+        "category": "PowerShell Localization"
+      },
+      {
+        "command": "powershellLocalization.setUICultureToFrFr",
+        "title": "Set UI Culture to French (fr-FR)",
+        "category": "PowerShell Localization"
+      }
+    ]
   },
   "scripts": {
     "bootstrap": "pwsh -NoLogo -NoProfile -ExecutionPolicy Bypass -File ./build.ps1 -Bootstrap",

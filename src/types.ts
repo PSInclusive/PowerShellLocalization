@@ -18,6 +18,7 @@ export interface ExtensionConfig {
   enableDecorations: boolean;
   searchExclude: string[];
   logLevel: LogLevel;
+  uiCulture: string;
 }
 
 export type LogLevel = 'error' | 'warn' | 'info' | 'debug';
