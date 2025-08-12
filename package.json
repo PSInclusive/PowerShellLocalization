@@ -2,7 +2,7 @@
   "name": "powershelllocalization",
   "displayName": "PowerShell Localization",
   "description": "View PowerShell localization variables inline.",
-  "version": "0.2.0",
+  "version": "0.1.0",
   "license": "MIT",
   "author": {
     "name": "Gilbert Sanchez"
