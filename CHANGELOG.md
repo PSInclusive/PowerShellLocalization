@@ -9,6 +9,12 @@ to structure this file.
 ## [Unreleased]
 
 ### Added
+- Windows PowerShell fallback support for better compatibility
+  - Extension now automatically detects and uses available PowerShell executable
+  - Tries PowerShell 7+ (`pwsh`) first, then falls back to Windows PowerShell 5.1 (`powershell`)
+  - Enables extension to work in enterprise environments where only Windows PowerShell is available
+  - Caches detected executable to avoid repeated detection calls
+  - Enhanced error handling with clearer error messages when no PowerShell is found
 - Changelog update instructions to Copilot instructions
   - Clear process for updating CHANGELOG.md for every PR
   - Guidelines for using Keep a Changelog format categories
