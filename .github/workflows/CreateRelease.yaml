@@ -15,7 +15,7 @@ jobs:
         shell: pwsh
         run: |
           # TODO: Get latest release number
-          .\build.ps1 -Task CI
+          .\build.ps1 -Task CI -Bootstrap
           # Outputs:
           #  vsix_path
           #  vsix_name
