@@ -88,7 +88,7 @@ Task Pester -Description "Run Pester tests" {
 
 Task Package -Depends Clean, Compile, Test -Description "Package the extension" {
   Write-Host '📦 Packaging extension...'
-  Write-Output 'y' | vsce package --allow-missing-repository --out $script:outDir
+  yarn package
   $vsixFiles = Get-ChildItem -Path $script:outDir -Filter $script:vsixPattern | Sort-Object LastWriteTime -Descending
   if (-not $vsixFiles) {
     throw '❌ No .vsix file was generated'
