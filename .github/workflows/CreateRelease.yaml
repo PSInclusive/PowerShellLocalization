@@ -1,6 +1,8 @@
 name: Create Release
 on:
   workflow_dispatch:
+permissions:
+  contents: write
 defaults:
   run:
     shell: pwsh
