@@ -45,11 +45,34 @@ This extension contributes the following settings:
 | `powershellLocalization.logLevel` | Set the logging level for the extension | `info` | `error`, `warn`, `info`, `debug` |
 | `powershellLocalization.uiCulture` | Specify the UI culture for PowerShell localization data | `en-US` | Language codes like `en-US`, `fr-FR`, `de-DE` |
 
+## Commands
+
+<!-- Full image URL with https required for vscode -->
+![Example showing the commands in action](https://github.com/PSInclusive/PowerShellLocalization/raw/main/static/SwitchLanguage.gif)
+
+This extension contributes the following commands that can be accessed via the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`):
+
+| Command | Description |
+|---------|-------------|
+| `PowerShell Localization: Switch UI Culture` | Change the UI culture for displaying localization values |
+| `PowerShell Localization: Set UI Culture to English (en-US)` | Set the UI culture to English (en-US) |
+| `PowerShell Localization: Set UI Culture to French (fr-FR)` | Set the UI culture to French (fr-FR) |
+
 ## Installation
+
+Installing from the marketplace is the best option: [Visual Studio Marketplace]
 
 1. Package the extension using the provided scripts
 2. Install the `.vsix` file in VS Code
 3. Reload VS Code to activate the extension
+
+## Usage
+
+1. Open a PowerShell module (`.psm1` file) that uses localization
+2. Ensure you have localization data files in language folders (e.g.,
+   `en-US/ModuleName.psd1`)
+3. Reference localization variables in your code: `$LocalizedData.MessageText`
+4. The extension will display the actual localized values inline
 
 ## Development
 
@@ -66,14 +89,6 @@ To build and install this extension:
 ./build.ps1 -Task Install
 ```
 
-## Usage
-
-1. Open a PowerShell module (`.psm1` file) that uses localization
-2. Ensure you have localization data files in language folders (e.g.,
-   `en-US/ModuleName.psd1`)
-3. Reference localization variables in your code: `$LocalizedData.MessageText`
-4. The extension will display the actual localized values inline
-
 ## Contributing
 
 Contributions are welcome! Please feel free to submit issues and pull requests.
@@ -81,3 +96,5 @@ Contributions are welcome! Please feel free to submit issues and pull requests.
 ## License
 
 MIT
+
+[Visual Studio Marketplace]: https://marketplace.visualstudio.com/items?itemName=PSInclusive.powershelllocalization
