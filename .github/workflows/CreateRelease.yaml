@@ -10,7 +10,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: yarn package
       - name: Get Release Details
         id: release_details
         shell: pwsh
