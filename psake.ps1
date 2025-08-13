@@ -148,5 +148,9 @@ Task CI -Depends Package -Description "Run CI task for GitHub Actions" {
   Write-Host "::notice::Changelog title: $title"
   Write-Host "::notice::Changelog body: $body"
   Add-Content -Path $outputFile -Value "changelog_title=$title"
-  Add-Content -Path $outputFile -Value "changelog_body=$body"
+  # Multiline is tricky: https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#example-of-a-multiline-string
+  $EOF = (New-Guid).Guid
+  Add-Content -Path $outputFile -Value "changelog_body<<$EOF"
+  Add-Content -Path $outputFile -Value "$body"
+  Add-Content -Path $outputFile -Value "$EOF"
 }
