@@ -27,17 +27,12 @@ A Visual Studio Code extension that displays PowerShell localization variable va
    yarn run lint
    ```
 
-4. **Install Visual Studio Code Extension manager** (takes ~90 seconds, NEVER CANCEL):
-   ```bash
-   npm install -g @vscode/vsce
-   ```
-
-5. **Package the extension** (takes ~5 seconds):
+4. **Package the extension** (takes ~5 seconds):
    ```bash
    echo 'y' | vsce package --allow-missing-repository
    ```
 
-6. **Complete build and validation** (total time ~2-3 minutes, NEVER CANCEL - use 300+ second timeout):
+5. **Complete build and validation** (total time ~2-3 minutes, NEVER CANCEL - use 300+ second timeout):
    ```bash
    yarn install && yarn run compile && yarn run lint && vsce package --allow-missing-repository
    ```
@@ -168,6 +163,7 @@ yarn run lint && yarn run compile && vsce package --allow-missing-repository
 - [ ] CHANGELOG.md has been updated with your changes in the "Unreleased" section
 - [ ] Changelog entries follow Keep a Changelog format with appropriate categories
 - [ ] Changelog descriptions are clear and user-focused
+- [ ] README.md has been updated if your changes affect user-facing functionality or installation instructions
 
 ## Architecture Overview
 

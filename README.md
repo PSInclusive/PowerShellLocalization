@@ -37,12 +37,13 @@ code.
 
 This extension contributes the following settings:
 
-- `powershellLocalization.enableDecorations`: Enable/disable decoration display
-  of localization variable values during code writing (default: true)
-- `powershellLocalization.enableInlineValues`: Enable/disable inline display of
-  localization variable values during debugging (default: false)
-- `powershellLocalization.searchExclude`: Configure glob patterns for excluding
-  directories and files from PowerShell module scanning
+| Setting | Description | Default | Options |
+|---------|-------------|---------|---------|
+| `powershellLocalization.enableDecorations` | Enable/disable decoration display of localization variable values during code writing | `true` | `true`, `false` |
+| `powershellLocalization.enableInlineValues` | Enable/disable inline display of localization variable values during debugging | `false` | `true`, `false` |
+| `powershellLocalization.searchExclude` | Configure glob patterns for excluding directories and files from PowerShell module scanning | Excludes `node_modules`, `out`, `dist`, and `.git` directories | Array of glob patterns |
+| `powershellLocalization.logLevel` | Set the logging level for the extension | `info` | `error`, `warn`, `info`, `debug` |
+| `powershellLocalization.uiCulture` | Specify the UI culture for PowerShell localization data | `en-US` | Language codes like `en-US`, `fr-FR`, `de-DE` |
 
 ## Installation
 

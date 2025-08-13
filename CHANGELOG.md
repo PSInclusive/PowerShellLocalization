@@ -6,9 +6,10 @@ in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how
 to structure this file.
 
-## [Unreleased]
+## [0.2.0] August 12, 2025
 
 ### Added
+
 - UICulture configuration support for PowerShell localization
   - New `powershellLocalization.uiCulture` setting to specify default UI culture (e.g., 'en-US', 'fr-FR')
   - Setting validates culture format using pattern `^[a-z]{2}(-[A-Z]{2})?$`
@@ -39,6 +40,7 @@ to structure this file.
   - Debug messages are now filtered out by default, providing cleaner output
 
 ### Fixed
+
 - LocalizationParser.ps1 now defaults to en-US culture when UICulture parameter is not provided
   - Fixes Import-LocalizedData failures in environments with invariant culture
   - Ensures localization files can be found in culture-specific subdirectories
@@ -60,3 +62,6 @@ to structure this file.
 - The extension turns on when it detects PowerShell files.
 - The localized data is cached for efficiency and is reloaded when the psm1 or
   psd1 files are modified.
+
+[0.2.0]: https://github.com/PSInclusive/PowerShellLocalization/tree/v0.2.0
+[0.1.0]: https://github.com/PSInclusive/PowerShellLocalization/tree/v0.1.0
