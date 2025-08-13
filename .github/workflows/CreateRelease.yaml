@@ -17,7 +17,7 @@ jobs:
       - name: Get Release Details
         id: release_details
         run: |
-          .\build.ps1 -Task CI
+          .\build.ps1 -Task CI -Bootstrap
           # Outputs: vsix_path, vsix_name, changelog_title, changelog_body
       - name: Create a Release
         uses: softprops/action-gh-release@v2
