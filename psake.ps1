@@ -136,7 +136,7 @@ Task CI -Depends Package -Description "Run CI task for GitHub Actions" {
   $firstHeaderLine = $headers[0].Line
 
   # The header is made up of a few component. We have to loop and convert each to string and join them
-  $title = ($headers[0].Inline | ForEach-Object { $_.ToString() }) -join ''
+  $title = $content[$firstHeaderLine].Trim("#")
   if ($headers.Count -eq 1) {
     # If there is only one header, then the content is from the first header to the end of the file
     $body = $content[$($firstHeaderLine + 1)..($content.Count - 1)] -join "`n"
